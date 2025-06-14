@@ -18,6 +18,9 @@ light[2] = "red";
 light[3] = "blue"; 
 light[4] = "green"; 
 light[5] = "orange";  
+light[6] = "lime";
+light[7] = "silver";
+light[8] = "gold";
 function flip(whichway){   
    document.body.style.backgroundColor = light[whichway];   
    stopFlip(); 
@@ -65,7 +68,7 @@ font-size:18px;
 <h1>WatzThis?</h1>
 <div id="directions">
 <ol>
-  <li>Use the top row of buttons to turn the flashlight on or off, or to make the light red.</li>
+  <li>Use the top row of buttons to turn the flashlight on or off, or to make the light red/green.</li>
   <li>Use the 2nd row of buttons to turn on and off your automatic flashing color light dance party.</li>
 </ol>
 </div>        
@@ -75,12 +78,12 @@ font-size:18px;
 <input type="button" id="OFF" class="bigButton" value="OFF" onclick="flip(0);"> 
 <input type="button" id="ON" class="bigButton" value="ON" onclick="flip(1);"> 
 <input type="button" id="RED" class="bigButton" value="RED" onclick="flip(2);">     
+<input type="button" id="GREEN" class="bigButton" value="GREEN" onclick="flip(4);">  
 </div> 
 <div id="danceparty"> 
-<input type="button" id="AUTO" class="bigButton" value="AUTO" onclick="doAutoFlip(500);"> 
+<input type="button" id="AUTO" class="bigButton" value="AUTO" onclick="doAutoFlip(250);"> 
 <input type="button" id="STOP" class="bigButton" value="STOP" onclick="stopFlip();"> 
 </div>     
 </div>
 </body> 
 </html> 
-
