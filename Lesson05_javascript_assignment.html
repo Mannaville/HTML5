@@ -73,6 +73,10 @@ text-align:left;
 .bigButton {
 font-size:18px;
 }
+/* new in Assignment 5: css portion to have 2 features: 
+    (1) background-color of grey
+    (2) display: inline-block to limit the size of grey background to the same length as text
+*/     
 #colorCaption {
   background-color: darkgrey;  
   display: inline-block;
@@ -80,7 +84,7 @@ font-size:18px;
 </style>  
 </head>  
 <body> 
-<h1>WatzThis in Lesson05's Assignment?</h1>
+<h1>WatzThis in Lesson05's Assignment? (added comments)</h1>
 <div id="directions">
 <ol>
   <li>Use the top row of buttons to turn the flashlight on or off, or to make the light red/green.</li>
@@ -99,7 +103,9 @@ font-size:18px;
 <input type="button" id="AUTO" class="bigButton" value="AUTO" onclick="doAutoFlip(600);"> 
 <input type="button" id="STOP" class="bigButton" value="STOP" onclick="stopFlip();"> 
 </div>     
+<!-- begin add div id "colorCaption" for assignment 5...to add colorCaption -->
 <div id="colorCaption"><span>Here is my text.</span></div>
+<!-- end  add div id "colorCaption" for assignment 5...to add colorCaption -->
 </div>
 </body> 
 </html> 
