@@ -16,9 +16,11 @@
 
 <div data-role="page" id="mypage">
     
-	<div data-role="header">
-		<h1>My Title</h1>
-	</div><!-- /header -->
+    <div data-role="header" data-position="fixed">
+	<a href="javascript:history.go(-1)">Back</a>
+	<h1>My Title</h1>
+	<a href="#mypage">Home</a>
+    </div>
     
 	<div data-role="content">	
 		<p>Hello world. <a href="#yourpage">Click here!</a></p>		
@@ -32,10 +34,12 @@
 
 <div data-role="page" id="yourpage">
 
-	<div data-role="header">
-		<h1>My Title</h1>
-	</div><!-- /header -->
-
+    <div data-role="header" data-position="fixed">
+	<a href="javascript:history.go(-1)">Back</a>
+	<h1>My Title</h1>
+	<a href="#mypage">Home</a>
+    </div>
+    
 	<div data-role="content">	
 		<p>OH hi! Check out <a href="#mypage">My page!</a></p>
 	</div><!-- /content -->
