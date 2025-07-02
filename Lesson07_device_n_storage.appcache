@@ -1,0 +1,27 @@
+CACHE MANIFEST
+
+# version 1
+
+CACHE:
+
+Lesson07_device_n_storage.html
+
+docs.html
+
+watzthis.css
+
+buttons.png
+
+https://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css
+
+https://code.jquery.com/jquery-1.6.4.min.js
+
+https://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js
+
+NETWORK:
+
+/register.html
+
+FALLBACK:
+
+*.html /offline.html
