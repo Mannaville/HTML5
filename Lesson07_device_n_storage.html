@@ -1,0 +1,157 @@
+<!DOCTYPE html>  
+<html manifest="mannaville.github.io/HTML5/Lesson07_device_n_storage.appcache"> 
+<head>    
+<meta name="apple-mobile-web-app-capable" content="yes">   
+<meta name="apple-mobile-web-app-status-bar-style" content="black">    
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">        
+<title>WatzThis? Lesson07_Device_n_Storage</title>  
+<script> 
+var light = new Array(); 
+var t; 
+var color=0; 
+var flipping=0; 
+var speed;  
+light[0] = 'black'; 
+light[1] = 'white'; 
+light[2] = "red"; 
+light[3] = "blue"; 
+light[4] = "green"; 
+light[5] = "orange";  
+light[6] = "lime";
+light[7] = "silver";
+light[8] = "gold";
+function flip(whichway){   
+   document.body.style.backgroundColor = light[whichway];  
+   document.getElementById('colorCaption').innerHTML=document.body.style.backgroundColor; 
+   stopFlip(); 
+}      
+function autoFlip() { 
+   document.body.style.backgroundColor = light[color];
+   document.getElementById('colorCaption').innerHTML=document.body.style.backgroundColor;
+// original logic in assignment #2 is commented out below   
+//   if (color < light.length-1) {         
+//     color++;     
+//   } else {         
+//     color=0;     
+//   }     
+// Begin Lesson 05's replacement code here
+   if (color > 0) {         
+     // color--;
+        color = color - 2;   // assignment to change to every other color     
+   } else {         
+     color=light.length-1;     
+   }  
+// end of Lesson 05's replacement code      
+t = setTimeout("autoFlip()",speed); 
+} 
+function doAutoFlip(changespeed){     
+ if (!flipping){         
+   flipping=1;   
+   speed=changespeed;      
+   autoFlip();     
+ }    
+} 
+function stopFlip() {     
+ clearTimeout(t);     
+ flipping=0; 
+} 
+/* dump the geolocation attributes
+var gps = navigator.geolocation.getCurrentPosition(
+    
+function (position) {  
+    for (key in position.coords) {
+        document.write(key+': '+ position.coords[key]);
+        document.write ('<br>');
+        }
+    }
+                                                  
+                                                  );*/
+function getLoc(){
+
+var gps = navigator.geolocation.getCurrentPosition(
+function(position){
+  var latitude = position.coords.latitude;
+  var longitude = position.coords.longitude;
+  /*alert("Your Latitude is: " + latitude + " and your longitude is: " + longitude + "! Have fun!");*/ 
+  document.getElementById('colorCaption').innerHTML="Your Latitude is: " + latitude + " and your longitude is: " + longitude + "! Have fun!";
+}
+);
+}
+//navigator.geolocation.getCurrentPosition(makeLink, noLink);
+ 
+function makeLink(position)
+{
+  var lat = position.coords.latitude;
+  var long = position.coords.longitude;
+  document.location.href="https://www.geocaching.com/seek/nearest.aspx?origin_lat="+lat+"&origin_long="+long+"&dist=100&submit3=Search";
+ 
+}
+function noLink()
+{
+ /* alert('Location not found!');*/
+ document.getElementById('colorCaption').innerHTML="Location not found!";
+}
+</script>  
+<style>
+body {
+font-family:arial, helvetica;
+text-align: center;
+}
+#directions, #flashlight, #danceparty {
+margin:4px;
+}
+ol {
+display: inline-block;
+margin: 0 auto;
+text-align:left;
+}
+.bigButton {
+font-size:18px;
+}
+/* new in Assignment 5: css portion to have 2 features: 
+    (1) background-color of grey
+    (2) display: inline-block to limit the size of grey background to the same length as text
+*/     
+#colorCaption {
+  background-color: lightgrey;  
+  display: inline-block;
+}
+</style>  
+</head>  
+<body> 
+<h1>WatzThis in Lesson07 Device and Storage</h1>
+<div id="directions">
+<ol>
+  <li>Use the top row of buttons to turn the flashlight on or off, or to make the light red/green.</li>
+  <li>Use the 2nd row of buttons to turn on and off your automatic flashing color light dance party.</li>
+</ol>
+</div>        
+<div id="container"> 
+
+<div id="flashlight">
+<input type="button" id="OFF" class="bigButton" value="OFF" onclick="flip(0);"> 
+<input type="button" id="ON" class="bigButton" value="ON" onclick="flip(1);"> 
+<input type="button" id="RED" class="bigButton" value="RED" onclick="flip(2);">     
+<input type="button" id="GREEN" class="bigButton" value="GREEN" onclick="flip(4);">  
+</div> 
+<div id="danceparty"> 
+<input type="button" id="AUTO" class="bigButton" value="AUTO" onclick="doAutoFlip(600);"> 
+<input type="button" id="STOP" class="bigButton" value="STOP" onclick="stopFlip();"> 
+</div>     
+<!-- begin add div id "colorCaption" for assignment 5...to add colorCaption -->
+<div id="colorCaption"><span>Here is my text.</span></div>
+<!-- end  add div id "colorCaption" for assignment 5...to add colorCaption -->
+<div id="geolocation"> 
+<input type="button" id="latlong" class="bigButton" value="GET LOC" onclick="getLoc();"> 
+<input type="button" id="latlong" class="bigButton" value="GeoCaching" onclick="navigator.geolocation.getCurrentPosition(makeLink, noLink);"> 
+</div>
+<!-- 
+<div id="geocaching">
+  <h1>Geocaches</h1>
+<p>If your browser asks to use your current location, click Yes. You will then be redirected to geocaching.com</p>
+</div>
+-->
+</div>
+</body> 
+</html> 
