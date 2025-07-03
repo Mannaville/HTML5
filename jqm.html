@@ -1,0 +1,197 @@
+<!DOCTYPE html>  
+<html manifest="mannaville.github.io/HTML5/Lesson07_device_n_storage.appcache"> 
+<head>    
+<meta name="apple-mobile-web-app-capable" content="yes">   
+<meta name="apple-mobile-web-app-status-bar-style" content="black">    
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+	<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+   <script>
+    $(document).bind('mobileinit',function(){
+      $.mobile.pushStateEnabled = false;
+    });
+  </script>
+	<script src="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>       
+<title>WatzThis? Lesson07_Device_n_Storage</title>  
+<script> 
+var light = new Array(); 
+var t; 
+var color=0; 
+var flipping=0; 
+var speed;  
+light[0] = 'black'; 
+light[1] = 'white'; 
+light[2] = "red"; 
+light[3] = "blue"; 
+light[4] = "green"; 
+light[5] = "orange";  
+light[6] = "lime";
+light[7] = "silver";
+light[8] = "gold";
+function flip(whichway){   
+ //  document.body.style.backgroundColor = light[whichway];  
+ //  document.getElementById('colorCaption').innerHTML=document.body.style.backgroundColor; 
+    mainContent.style.backgroundColor = light[whichway];
+    document.getElementById('colorCaption').innerHTML=light[whichway];
+   stopFlip(); 
+}      
+function autoFlip() { 
+ //  document.body.style.backgroundColor = light[color];
+ //  document.getElementById('colorCaption').innerHTML=document.body.style.backgroundColor;
+    mainContent.style.backgroundColor = light[color];
+    document.getElementById('colorCaption').innerHTML=light[color]ß;
+
+// original logic in assignment #2 is commented out below   
+//   if (color < light.length-1) {         
+//     color++;     
+//   } else {         
+//     color=0;     
+//   }     
+// Begin Lesson 05's replacement code here
+   if (color > 0) {         
+     // color--;
+        color = color - 2;   // assignment to change to every other color     
+   } else {         
+     color=light.length-1;     
+   }  
+// end of Lesson 05's replacement code      
+t = setTimeout("autoFlip()",speed); 
+} 
+function doAutoFlip(changespeed){     
+ if (!flipping){         
+   flipping=1;   
+   speed=changespeed;      
+   autoFlip();     
+ }    
+} 
+function stopFlip() {     
+ clearTimeout(t);     
+ flipping=0; 
+} 
+/* dump the geolocation attributes
+var gps = navigator.geolocation.getCurrentPosition(
+    
+function (position) {  
+    for (key in position.coords) {
+        document.write(key+': '+ position.coords[key]);
+        document.write ('<br>');
+        }
+    }
+                                                  
+                                                  );*/
+function getLoc(){
+
+var gps = navigator.geolocation.getCurrentPosition(
+function(position){
+  var latitude = position.coords.latitude;
+  var longitude = position.coords.longitude;
+  /*alert("Your Latitude is: " + latitude + " and your longitude is: " + longitude + "! Have fun!");*/ 
+  document.getElementById('colorCaption').innerHTML="Your Latitude is: " + latitude + " and your longitude is: " + longitude + "! Have fun!";
+}
+);
+}
+//navigator.geolocation.getCurrentPosition(makeLink, noLink);
+ 
+function makeLink(position)
+{
+  var lat = position.coords.latitude;
+  var long = position.coords.longitude;
+  document.location.href="https://www.geocaching.com/seek/nearest.aspx?origin_lat="+lat+"&origin_long="+long+"&dist=100&submit3=Search";
+ 
+}
+function noLink()
+{
+ /* alert('Location not found!');*/
+ document.getElementById('colorCaption').innerHTML="Location not found!";
+}
+</script>  
+
+<style>
+body {
+font-family:arial, helvetica;
+text-align: center;
+}
+#directions, #flashlight, #danceparty {
+margin:4px;
+}
+ol {
+display: inline-block;
+margin: 0 auto;
+text-align:left;
+}
+.bigButton {
+font-size:18px;
+}
+
+/* new in Assignment 5: css portion to have 2 features: 
+    (1) background-color of grey
+    (2) display: inline-block to limit the size of grey background to the same length as text
+*/    
+/* 
+#colorCaption {
+  background-color: lightgrey;  
+  display: inline-block;
+}
+ */ 
+</style>  
+ 
+</head>  
+<body> 
+ <div data-role="page" id="mypage">  
+  <div data-role="header" data-position="fixed">
+        <h1>WatzThis</h1>
+    </div> <!--end of data-role=header -->  
+<div role="main" class="ui-content" id="mainContent" > 
+<h1>WatzThis in Lesson07 Device and Storage</h1>
+<div id="directions">
+<ol>
+  <li>Use the top row of buttons to turn the flashlight on or off, or to make the light red/green.</li>
+  <li>Use the 2nd row of buttons to turn on and off your automatic flashing color light dance party.</li>
+  <li>Use the 3rd row of buttons to test Geolocations</li>
+</ol>
+</div>        
+
+
+<div id="flashlight" data-role="controlgroup" data-type="horizontal"> 
+<input type="button" id="OFF" class="bigButton" value="OFF" onclick="flip(0);"> 
+<input type="button" id="ON" class="bigButton" value="ON" onclick="flip(1);"> 
+<input type="button" id="RED" class="bigButton" value="RED" onclick="flip(2);">     
+<input type="button" id="GREEN" class="bigButton" value="GREEN" onclick="flip(4);">  
+</div> 
+<div id="danceparty" data-role="controlgroup" data-type="horizontal"> 
+<input type="button" id="AUTO" class="bigButton" value="AUTO" onclick="doAutoFlip(600);"> 
+<input type="button" id="STOP" class="bigButton" value="STOP" onclick="stopFlip();"> 
+</div>     
+<!-- begin add div id "colorCaption" for assignment 5...to add colorCaption -->
+<div id="colorCaption">Here is my text.</div>
+<!-- end  add div id "colorCaption" for assignment 5...to add colorCaption -->
+<div id="geolocation" data-role="controlgroup" data-type="horizontal"> 
+<input type="button" id="latlong" class="bigButton" value="GET LOC" onclick="getLoc();"> 
+<input type="button" id="latlong" class="bigButton" value="GeoCaching" onclick="navigator.geolocation.getCurrentPosition(makeLink, noLink);"> 
+</div>
+</div> <!--end of role=main --> 
+
+  <div data-role="footer" data-position="fixed">
+       <p>created by WatzThis Enterprises</p>
+     
+        <div data-role="navbar" data-id="watzthisnav">
+            <ul>
+            <li><a href="#mypage">Home</a></li>
+            <li><a href="docs.html">Help</a></li>
+            </ul>
+        </div> <!--navbar-->
+    </div> <!--footer-->
+ </div><!-- data-role page -->
+
+
+<!-- 
+<div id="geocaching">
+  <h1>Geocaches</h1>
+<p>If your browser asks to use your current location, click Yes. You will then be redirected to geocaching.com</p>
+</div>
+-->
+
+
+</body> 
+</html> 

@@ -1,0 +1,17 @@
+body {
+      font-family: sans-serif;
+}
+p {
+color: blue;
+}
+h2 {
+color: blue;
+text-shadow: 3px 3px 3px gray;
+}
+#xid {
+    border: 3px solid green; padding:1em;
+    box-shadow: 5px 5px gray;
+}
+#colorCaption {
+  background-color: lightgrey;  
+  display: inline-block;
