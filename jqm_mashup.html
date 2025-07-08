@@ -1,0 +1,297 @@
+<!DOCTYPE html>  
+<html manifest="mannaville.github.io/HTML5/Lesson07_device_n_storage.appcache"> 
+<head>    
+<meta name="apple-mobile-web-app-capable" content="yes">   
+<meta name="apple-mobile-web-app-status-bar-style" content="black">    
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+  <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+   <script>
+    $(document).bind('mobileinit',function(){
+      $.mobile.pushStateEnabled = false;
+    });
+  </script>
+  <script src="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>   
+  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAv1ARWJIW8Hqlfjc3c6DdIx9jKI5eevbY&libraries=places"></script>
+  <title>WatzThis? Lesson08_Web_API_Mashup</title>  
+<script> 
+var light = new Array(); 
+var t; 
+var color=0; 
+var flipping=0; 
+var speed;  
+light[0] = 'black'; 
+light[1] = 'white'; 
+light[2] = "red"; 
+light[3] = "blue"; 
+light[4] = "green"; 
+light[5] = "orange";  
+light[6] = "lime";
+light[7] = "silver";
+light[8] = "gold";
+function flip(whichway){  
+  
+   document.getElementById('colorCaption').innerHTML=light[whichway]; 
+   document.getElementById('mainContent').style.backgroundColor = light[whichway];  
+   stopFlip(); 
+}      
+function autoFlip() { 
+ 
+  document.getElementById('colorCaption').innerHTML= light[color];
+  document.getElementById('mainContent').style.backgroundColor = light[color];
+
+   if (color > 0) {         
+        color = color - 2;      
+   } else {         
+     color=light.length-1;     
+   }  
+t = setTimeout("autoFlip()",speed); 
+} 
+function doAutoFlip(changespeed){     
+ if (!flipping){         
+   flipping=1;   
+   speed=changespeed;      
+   autoFlip();     
+ }    
+} 
+function stopFlip() {     
+ clearTimeout(t);     
+ flipping=0; 
+} 
+
+function $(id){
+   return document.getElementById(id);
+}
+
+
+//initialize map variables;
+var you = {}; // UNCOMMENTED
+var map = {}; // UNCOMMENTED
+// Removed `var service;` as it's not strictly used for new Places API methods
+
+async function getLoc() { 
+    if (navigator.geolocation) {
+        try {
+            const position = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, (error) => {
+                    console.error("Geolocation error:", error);
+                    reject(error);
+                });
+            });
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            document.getElementById('colorCaption').innerHTML = "Your Latitude is: " + latitude + " and your longitude is: " + longitude + "! Have fun!";
+
+            const latLng = new google.maps.LatLng(latitude, longitude);
+            const opts = { zoom: 14, center: latLng, mapTypeId: google.maps.MapTypeId.ROADMAP };
+            map = new google.maps.Map($("map_canvas"), opts); 
+
+            you = new google.maps.Marker({
+                position: latLng,
+                map: map,
+                title: "There you are!"
+            });
+            const infowindow = new google.maps.InfoWindow({
+                map: map,
+                position: latLng,
+                content: 'Location found using HTML5.'
+            });
+
+            const request = {
+                locationRestriction: { 
+                    center: latLng,
+                    radius: 1000 
+                },
+                includedTypes: ['restaurant', 'cafe'], 
+                maxResultCount: 20, 
+                fields: ['displayName', 'formattedAddress', 'rating', 'types', 'editorialSummary','nationalPhoneNumber']
+            };
+
+            const { places } = await google.maps.places.Place.searchNearby(request); 
+
+            callback(places, google.maps.places.PlacesServiceStatus.OK); 
+
+        } catch (error) {
+            console.error("Error in getLoc:", error);
+            document.getElementById('restaurant_list').innerHTML = '<p>Error fetching places: ' + error.message + '</p>';
+            callback([], 'ERROR'); 
+        }
+    } else {
+        alert("Your browser doesn't support geolocation.");
+    }
+}
+
+function callback(results, status) {
+    const restaurantList = $('restaurant_list');
+    restaurantList.innerHTML = ''; 
+
+    if (status === google.maps.places.PlacesServiceStatus.OK || (results && results.length > 0)) { // Modified condition for clarity
+        if (results && results.length > 0) { // Check for results existence and length
+            const ul = document.createElement('ul');
+            results.forEach(function(place) {
+                const li = document.createElement('li');
+                 let textContent = place.displayName;
+
+                // Add rating if available
+                if (place.rating) {
+                    textContent += ' (' + place.rating + ' stars)';
+                }
+
+                // ✨ Add formatted address if available
+                if (place.formattedAddress) {
+                    textContent +=  ':  ' + place.formattedAddress;
+                }
+                // ✨ Add national phone number if available
+                if (place.nationalPhoneNumber) {
+                    textContent += ' - Tel: ' + place.nationalPhoneNumber;
+                }
+                li.textContent = textContent;
+                ul.appendChild(li);
+            });
+            restaurantList.appendChild(ul);
+        } else {
+            restaurantList.innerHTML = '<p>No restaurants or cafes found within 1 KM.</p>';
+        }
+    } else {
+        restaurantList.innerHTML = '<p>Error fetching places: ' + status + '</p>';
+    }
+}
+ 
+function makeLink(position)
+{
+  var lat = position.coords.latitude;
+  var long = position.coords.longitude;
+  document.location.href="https://www.geocaching.com/seek/nearest.aspx?origin_lat="+lat+"&origin_long="+long+"&dist=100&submit3=Search";
+ 
+}
+function noLink()
+{
+ document.getElementById('colorCaption').innerHTML="Location not found!";
+}
+</script>  
+
+<style>
+body {
+font-family:arial, helvetica;
+text-align: center;
+margin: 0; 
+min-height: 100vh;
+}
+#directions, #flashlight, #danceparty, #colorCaption,#mainContent{
+margin:4px;
+text-shadow: none;
+
+}
+#colorCaption {
+  background-color: lightgrey;
+  display: inline-block;
+}
+ol {
+display: inline-block;
+margin: 0 auto;
+text-align:left;
+ 
+}
+.bigButton {
+font-size:18px;
+}
+
+.ui-content {
+    padding: 0; 
+}
+#map_container {
+    display: flex; 
+    justify-content: center; 
+    flex-wrap: wrap; 
+    margin-top: 10px;
+}
+#map_canvas {
+  width: 300px;
+  height: 300px;
+  border: 1px solid black;
+  margin: 5px; 
+}
+#restaurant_panel {
+    width: 300px; 
+    min-height: 300px; 
+    border: 1px solid blue; 
+    margin: 5px;
+    padding: 10px;
+    box-sizing: border-box; 
+    text-align: left; 
+    overflow-y: auto; 
+}
+#restaurant_list h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+#restaurant_list ul {
+    list-style-type: none; 
+    padding: 0;
+    background-color: whitesmoke;
+}
+#restaurant_list li {
+    padding: 5px 0;
+    border-bottom: 1px dashed #eee;
+}
+#restaurant_list li:last-child {
+    border-bottom: none;
+}
+
+</style>  
+ 
+</head>  
+<body> 
+ <div data-role="page" id="mypage">  
+  <div data-role="header" data-position="fixed">
+        <h1>WatzThis</h1>
+    </div> <div role="main" class="ui-content" id="mainContent" >  
+
+<h1>WatzThis in Lesson08 Web API and Mashup</h1>
+<div id="directions">
+<ol>
+  <li>Use the top row of buttons to turn the flashlight on or off, or to make the light red/green.</li>
+  <li>Use the 2nd row of buttons to turn on and off your automatic flashing color light dance party.</li>
+  <li>Use the 3rd row of buttons to test Geolocations</li>
+</ol>
+</div>        
+
+
+<div id="flashlight" data-role="controlgroup" data-type="horizontal"> 
+<input type="button" id="OFF" class="bigButton" value="OFF" onclick="flip(0);"> 
+<input type="button" id="ON" class="bigButton" value="ON" onclick="flip(1);"> 
+<input type="button" id="RED" class="bigButton" value="RED" onclick="flip(2);">     
+<input type="button" id="GREEN" class="bigButton" value="GREEN" onclick="flip(4);">  
+</div> 
+<div id="danceparty" data-role="controlgroup" data-type="horizontal"> 
+<input type="button" id="AUTO" class="bigButton" value="AUTO" onclick="doAutoFlip(600);"> 
+<input type="button" id="STOP" class="bigButton" value="STOP" onclick="stopFlip();"> 
+</div>     
+<div id="colorCaption">Here is my text.</div>
+<div id="geolocation" data-role="controlgroup" data-type="horizontal"> 
+<input type="button" id="latlong" class="bigButton" value="GET LOC" onclick="getLoc();"> 
+<input type="button" id="latlong" class="bigButton" value="GeoCaching" onclick="navigator.geolocation.getCurrentPosition(makeLink, noLink);"> 
+</div>
+<div id="map_container">
+    <div id="map_canvas"></div>
+    <div id="restaurant_panel">
+        <h2>Nearby Restaurants & Cafes</h2>
+        <div id="restaurant_list">
+            <p>Click "GET LOC" to find places.</p>
+        </div>
+    </div>
+</div>
+</div> <div data-role="footer" data-position="fixed">
+  
+       <p>created by WatzThis Enterprises</p>
+     
+        <div data-role="navbar" data-id="watzthisnav">
+            <ul>
+            <li><a href="#mypage">Home</a></li>
+            <li><a href="docs.html">Help</a></li>
+            </ul>
+        </div> </div> </div></body> 
+</html>
