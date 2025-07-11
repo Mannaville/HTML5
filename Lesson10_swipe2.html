@@ -244,7 +244,7 @@ font-size:18px;
 #myElement {
     width: 100px;
     height: 100px;
-    background-color: lightblue;
+    background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -253,6 +253,8 @@ font-size:18px;
     color: black;
     cursor: pointer; /* Indicate it's interactive */
     user-select: none; /* Prevent text selection on touch */
+    margin-left: auto;
+    margin-right: auto;
 }
 iframe {
     border: none;
@@ -270,10 +272,10 @@ iframe {
 <h1>WatzThis in Lesson10 Optimizing for Mobile Devices</h1>
 
 <!--<object width="100%" height="150px" data="animated_ghost.svg" type="image/svg+xml"></object>-->
-<iframe name="ghost" width="100%" height="100px" src="animated_ghost.svg"></iframe>
+<iframe name="ghost" width="100%" height="200px" src="pirate2.svg"></iframe>
 
  <div id="myElement">
-        Touch me! 👋
+        Swipe me! 👋
     </div>
   
    <p id="message"></p>
@@ -329,13 +331,13 @@ iframe {
                     if (Math.abs(diffX) > MIN_SWIPE_DISTANCE) {
                         if (diffX > 0) {
                             messageDisplay.textContent = 'Swiped Right! 👉';
-                            iframe.location.href = 'animated_ghost.svg';
+                            iframe.location.href = 'pirate2.svg';
                             console.log('Swipe Right detected');
                             // Add your specific logic for a right swipe here
                         } else {
                             messageDisplay.textContent = 'Swiped Left! 👈';
                             console.log('Swipe Left detected');
-                            iframe.location.href = 'animated_ghost_reverse.svg';
+                            iframe.location.href = 'pirate2_reverse.svg';
                             // Add your specific logic for a left swipe here
                         }
                     }
