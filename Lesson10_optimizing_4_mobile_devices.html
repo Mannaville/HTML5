@@ -245,6 +245,19 @@ font-size:18px;
 #restaurant_list li:last-child {
     border-bottom: none;
 }
+#myElement {
+    width: 50px;
+    height: 50px;
+    background-color: lightblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+    font-size: 10px;
+    color: white;
+    cursor: pointer; /* Indicate it's interactive */
+    user-select: none; /* Prevent text selection on touch */
+}
 </style>
  
  
@@ -281,6 +294,42 @@ font-size:18px;
     </svg>-->
 
 <object width="100%" height="200px" data="pirate2.svg" type="image/svg+xml"></object>
+ <div id="myElement">
+        Touch me! 👋
+    </div>
+
+    <p id="message"></p>
+
+    <script>
+        // Get references to the HTML elements
+        const myElement = document.getElementById('myElement');
+        const messageDisplay = document.getElementById('message');
+
+        // Add a touchstart event listener to 'myElement'
+        myElement.addEventListener('touchstart', function(event) {
+            // Prevent the default touch behavior (e.g., scrolling, zooming)
+            event.preventDefault(); 
+            
+            // Update the message display
+            messageDisplay.textContent = 'Touch started! 👍';
+
+            // You can also get touch details from the event object:
+            // const touch = event.touches[0]; // Get the first touch point
+            // console.log('Touch X:', touch.clientX, 'Touch Y:', touch.clientY);
+        });
+
+        // Optional: Add touchend to reset the message
+        myElement.addEventListener('touchend', function() {
+            messageDisplay.textContent = 'Touch ended! 👇';
+        });
+
+        // Optional: Add touchcancel for interrupted touches
+        myElement.addEventListener('touchcancel', function() {
+            messageDisplay.textContent = 'Touch cancelled! ✋';
+        });
+
+    </script>
+
 <div id="directions">
 <ol>
   <li>Use the top row of buttons to turn the flashlight on or off, or to make the light red/green.</li>
