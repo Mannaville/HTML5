@@ -422,6 +422,7 @@ iframe {
 <iframe id="ghost_iframe" name="ghost" width="800px" height="200px" src="pirate2.svg"></iframe>
  Swipe me! 👋
 </div>
+<div id="colorCaption">Here is my text.</div>
 <!--<div id="directions" ontouchstart="touchStart(event,'ghost');" ontouchend="touchEnd(event);" ontouchmove="touchMove(event);" ontouchcancel="touchCancel(event);">-->
 <div id="directions">
 <ol>
@@ -431,8 +432,6 @@ iframe {
   <li>Use the 3rd row of buttons to test Geolocations</li>
 </ol>
 </div>        
-
-
 <div id="flashlight" data-role="controlgroup" data-type="horizontal"> 
 <input type="button" id="OFF" class="bigButton" value="OFF" onclick="flip(0);"> 
 <input type="button" id="ON" class="bigButton" value="ON" onclick="flip(1);"> 
@@ -443,7 +442,7 @@ iframe {
 <input type="button" id="AUTO" class="bigButton" value="AUTO" onclick="doAutoFlip(600);"> 
 <input type="button" id="STOP" class="bigButton" value="STOP" onclick="stopFlip();"> 
 </div>     
-<div id="colorCaption">Here is my text.</div>
+
 <div id="geolocation" data-role="controlgroup" data-type="horizontal"> 
 <input type="button" id="latlong" class="bigButton" value="GET LOC" onclick="getLoc();"> 
 <input type="button" id="latlong" class="bigButton" value="GeoCaching" onclick="navigator.geolocation.getCurrentPosition(makeLink, noLink);"> 
