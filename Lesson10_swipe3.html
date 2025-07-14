@@ -365,12 +365,17 @@ iframe {
     function processingRoutine() {
       if ( swipeDirection == 'left' ) {
           window.frames.ghost.location.href = 'pirate2_reverse.svg';
+          document.getElementById('colorCaption').innerHTML = "Ghost at 3 o'clock!";
       } else if ( swipeDirection == 'right' ) {
           window.frames.ghost.location.href = 'pirate2.svg';
+          document.getElementById('colorCaption').innerHTML = "Ghost at 9 o'clock!";
       } else if ( swipeDirection == 'up' ) {
-          alert('up');
+       //   alert('up');
+       document.getElementById('colorCaption').innerHTML = "You just swiped up";
+
       } else if ( swipeDirection == 'down' ) {
-          alert('down');
+       //   alert('down');
+       document.getElementById('colorCaption').innerHTML = "You just swiped down";
       }
     }
     
