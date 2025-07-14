@@ -2,7 +2,7 @@
     <svg width="800" height="200" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
      <g class="layer">
       <title>Layer 1</title>
-      <svg x="0">
+      <svg x="-300">
       <polygon cx="178" cy="152" fill="#ffff00" id="svg_4" orient="point" point="5" r="0" r2="0" shape="star" strokeWidth="5" strokecolor="#000000"/>
       <polygon cx="181" cy="147" fill="#ffff00" id="svg_5" orient="point" point="5" r="0" r2="0" shape="star" strokeWidth="5" strokecolor="none"/>
       <polygon cx="181" cy="147" fill="#ffff00" id="svg_6" orient="point" point="5" r="0" r2="0" shape="star" strokeWidth="5" strokecolor="none" transform="rotate(164.055 105.748 -0.00000276554)"/>
