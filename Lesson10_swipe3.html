@@ -361,21 +361,24 @@ iframe {
         }
     }
 
- var swipedElement = document.getElementById(triggerElementID);
-    function processingRoutine() {
-      if ( swipeDirection == 'left' ) {
-          window.frames.ghost.location.href = 'pirate2_reverse.svg';
-          document.getElementById('colorCaption').innerHTML = "Ghost at 3 o'clock!";
-      } else if ( swipeDirection == 'right' ) {
-          window.frames.ghost.location.href = 'pirate2.svg';
-          document.getElementById('colorCaption').innerHTML = "Ghost at 9 o'clock!";
-      } else if ( swipeDirection == 'up' ) {
-       //   alert('up');
-       document.getElementById('colorCaption').innerHTML = "You just swiped up";
+   function processingRoutine() {
+      // Ensure triggerElementID is correctly set from touchStart
+      if (triggerElementID === 'ghost_div') { // Check if the swipe was on ghost_div
+          var ghostIframe = document.getElementById('ghost_iframe'); // Get the iframe by its ID
+          if ( swipeDirection == 'left' ) {
+              ghostIframe.src = 'pirate2_reverse.svg';
+              document.getElementById('colorCaption').innerHTML = "Ghost at 3 o'clock!";
+          } else if ( swipeDirection == 'right' ) {
+              ghostIframe.src = 'pirate2.svg';
+              document.getElementById('colorCaption').innerHTML = "Ghost at 9 o'clock!";
+          } else if ( swipeDirection == 'up' ) {
+           //   alert('up');
+           document.getElementById('colorCaption').innerHTML = "You just swiped up";
 
-      } else if ( swipeDirection == 'down' ) {
-       //   alert('down');
-       document.getElementById('colorCaption').innerHTML = "You just swiped down";
+          } else if ( swipeDirection == 'down' ) {
+           //   alert('down');
+           document.getElementById('colorCaption').innerHTML = "You just swiped down";
+          }
       }
     }
     
@@ -415,8 +418,9 @@ iframe {
     </svg>-->
 
 <!--<object width="100%" height="200px" data="pirate2.svg" type="image/svg+xml"></object>-->
-<div id="ghost_div" ontouchstart="touchStart(event,'ghost');" ontouchend="touchEnd(event);" ontouchmove="touchMove(event);" ontouchcancel="touchCancel(event);">
-<iframe name="ghost" width="800px" height="200px" src="pirate2.svg"></iframe>
+<div id="ghost_div" ontouchstart="touchStart(event,'ghost_div');" ontouchend="touchEnd(event);" ontouchmove="touchMove(event);" ontouchcancel="touchCancel(event);">
+<iframe id="ghost_iframe" name="ghost" width="800px" height="200px" src="pirate2.svg"></iframe>
+ Swipe me! 👋
 </div>
 <!--<div id="directions" ontouchstart="touchStart(event,'ghost');" ontouchend="touchEnd(event);" ontouchmove="touchMove(event);" ontouchcancel="touchCancel(event);">-->
 <div id="directions">
