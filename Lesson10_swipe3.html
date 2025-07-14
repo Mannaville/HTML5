@@ -1,0 +1,462 @@
+<!DOCTYPE html>  
+<html manifest="mannaville.github.io/HTML5/Lesson07_device_n_storage.appcache"> 
+<head>    
+<meta name="apple-mobile-web-app-capable" content="yes">   
+<meta name="apple-mobile-web-app-status-bar-style" content="black">    
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+  <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+   <script>
+    $(document).bind('mobileinit',function(){
+      $.mobile.pushStateEnabled = false;
+    });
+  </script>
+  <script src="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>   
+  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAv1ARWJIW8Hqlfjc3c6DdIx9jKI5eevbY&libraries=places"></script>
+  <title>WatzThis? Lesson08_Web_API_Mashup</title>  
+<script> 
+var light = new Array(); 
+var t; 
+var color=0; 
+var flipping=0; 
+var speed;  
+light[0] = 'black'; 
+light[1] = 'white'; 
+light[2] = "red"; 
+light[3] = "blue"; 
+light[4] = "green"; 
+light[5] = "orange";  
+light[6] = "lime";
+light[7] = "silver";
+light[8] = "gold";
+function flip(whichway){  
+  
+   document.getElementById('colorCaption').innerHTML=light[whichway]; 
+   document.getElementById('mainContent').style.backgroundColor = light[whichway];  
+   stopFlip(); 
+}      
+function autoFlip() { 
+ 
+  document.getElementById('colorCaption').innerHTML= light[color];
+  document.getElementById('mainContent').style.backgroundColor = light[color];
+
+   if (color > 0) {         
+        color = color - 2;      
+   } else {         
+     color=light.length-1;     
+   }  
+t = setTimeout("autoFlip()",speed); 
+} 
+function doAutoFlip(changespeed){     
+ if (!flipping){         
+   flipping=1;   
+   speed=changespeed;      
+   autoFlip();     
+ }    
+} 
+function stopFlip() {     
+ clearTimeout(t);     
+ flipping=0; 
+} 
+
+function $(id){
+   return document.getElementById(id);
+}
+
+
+//initialize map variables;
+var you = {}; // UNCOMMENTED
+var map = {}; // UNCOMMENTED
+// Removed `var service;` as it's not strictly used for new Places API methods
+
+async function getLoc() { 
+    if (navigator.geolocation) {
+        try {
+            const position = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, (error) => {
+                    console.error("Geolocation error:", error);
+                    reject(error);
+                });
+            });
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            document.getElementById('colorCaption').innerHTML = "Your Latitude is: " + latitude + " and your longitude is: " + longitude + "! Have fun!";
+
+            const latLng = new google.maps.LatLng(latitude, longitude);
+            const opts = { zoom: 14, center: latLng, mapTypeId: google.maps.MapTypeId.ROADMAP };
+            map = new google.maps.Map($("map_canvas"), opts); 
+
+            you = new google.maps.Marker({
+                position: latLng,
+                map: map,
+                title: "There you are!"
+            });
+            const infowindow = new google.maps.InfoWindow({
+                map: map,
+                position: latLng,
+                content: 'Location found using HTML5.'
+            });
+
+            const request = {
+                locationRestriction: { 
+                    center: latLng,
+                    radius: 1000 
+                },
+                includedTypes: ['restaurant', 'cafe'], 
+                maxResultCount: 20, 
+                fields: ['displayName', 'formattedAddress', 'rating', 'types', 'editorialSummary','nationalPhoneNumber']
+            };
+
+            const { places } = await google.maps.places.Place.searchNearby(request); 
+
+            callback(places, google.maps.places.PlacesServiceStatus.OK); 
+
+        } catch (error) {
+            console.error("Error in getLoc:", error);
+            document.getElementById('restaurant_list').innerHTML = '<p>Error fetching places: ' + error.message + '</p>';
+            callback([], 'ERROR'); 
+        }
+    } else {
+        alert("Your browser doesn't support geolocation.");
+    }
+}
+
+function callback(results, status) {
+    const restaurantList = $('restaurant_list');
+    restaurantList.innerHTML = ''; 
+
+    if (status === google.maps.places.PlacesServiceStatus.OK || (results && results.length > 0)) { // Modified condition for clarity
+        if (results && results.length > 0) { // Check for results existence and length
+            const ul = document.createElement('ul');
+            results.forEach(function(place) {
+                const li = document.createElement('li');
+                 let textContent = place.displayName;
+
+                // Add rating if available
+                if (place.rating) {
+                    textContent += ' (' + place.rating + ' stars)';
+                }
+
+                // ✨ Add formatted address if available
+                if (place.formattedAddress) {
+                    textContent +=  ':  ' + place.formattedAddress;
+                }
+                // ✨ Add national phone number if available
+                if (place.nationalPhoneNumber) {
+                    textContent += ' - Tel: ' + place.nationalPhoneNumber;
+                }
+                li.textContent = textContent;
+                ul.appendChild(li);
+            });
+            restaurantList.appendChild(ul);
+        } else {
+            restaurantList.innerHTML = '<p>No restaurants or cafes found within 1 KM.</p>';
+        }
+    } else {
+        restaurantList.innerHTML = '<p>Error fetching places: ' + status + '</p>';
+    }
+}
+ 
+function makeLink(position)
+{
+  var lat = position.coords.latitude;
+  var long = position.coords.longitude;
+  document.location.href="https://www.geocaching.com/seek/nearest.aspx?origin_lat="+lat+"&origin_long="+long+"&dist=100&submit3=Search";
+ 
+}
+function noLink()
+{
+ document.getElementById('colorCaption').innerHTML="Location not found!";
+}
+</script>  
+
+<style>
+body {
+font-family:arial, helvetica;
+text-align: center;
+margin: 0; 
+min-height: 100vh;
+}
+#directions, #flashlight, #danceparty, #colorCaption,#mainContent{
+margin:4px;
+text-shadow: none;
+
+}
+#colorCaption {
+  background-color: lightgrey;
+  display: inline-block;
+}
+ol {
+display: inline-block;
+margin: 0 auto;
+text-align:left;
+ 
+}
+.bigButton {
+font-size:18px;
+}
+
+.ui-content {
+    padding: 0; 
+}
+#map_container {
+    display: flex; 
+    justify-content: center; 
+    flex-wrap: wrap; 
+    margin-top: 10px;
+}
+#map_canvas {
+  width: 300px;
+  height: 300px;
+  border: 1px solid black;
+  margin: 5px; 
+}
+#restaurant_panel {
+    width: 300px; 
+    min-height: 300px; 
+    border: 1px solid blue; 
+    margin: 5px;
+    padding: 10px;
+    box-sizing: border-box; 
+    text-align: left; 
+    overflow-y: auto; 
+}
+#restaurant_list h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+#restaurant_list ul {
+    list-style-type: none; 
+    padding: 0;
+    background-color: whitesmoke;
+}
+#restaurant_list li {
+    padding: 5px 0;
+    border-bottom: 1px dashed #eee;
+}
+#restaurant_list li:last-child {
+    border-bottom: none;
+}
+iframe {
+    border: none;
+    display: block;
+    }
+</style>
+<script type="text/javascript">
+    // TOUCH-EVENTS SINGLE-FINGER SWIPE-SENSING JAVASCRIPT
+    // Courtesy of PADILICIOUS.COM and MACOSXAUTOMATION.COM
+    
+    // this script can be used with one or more page elements to perform actions based on them being swiped with a single finger
+
+    var triggerElementID = null; // this variable is used to identity the triggering element
+    var fingerCount = 0;
+    var startX = 0;
+    var startY = 0;
+    var curX = 0;
+    var curY = 0;
+    var deltaX = 0;
+    var deltaY = 0;
+    var horzDiff = 0;
+    var vertDiff = 0;
+    var minLength = 72; // the shortest distance the user may swipe
+    var swipeLength = 0;
+    var swipeAngle = null;
+    var swipeDirection = null;
+    
+    // The 4 Touch Event Handlers
+    
+    // NOTE: the touchStart handler should also receive the ID of the triggering element
+    // make sure its ID is passed in the event call placed in the element declaration, like:
+    // <div id="picture-frame" ontouchstart="touchStart(event,'picture-frame');"  ontouchend="touchEnd(event);" ontouchmove="touchMove(event);" ontouchcancel="touchCancel(event);">
+
+    function touchStart(event,passedName) {
+        // disable the standard ability to select the touched object
+        event.preventDefault();
+        // get the total number of fingers touching the screen
+        fingerCount = event.touches.length;
+        // since we're looking for a swipe (single finger) and not a gesture (multiple fingers),
+        // check that only one finger was used
+        if ( fingerCount == 1 ) {
+            // get the coordinates of the touch
+            startX = event.touches[0].pageX;
+            startY = event.touches[0].pageY;
+            // store the triggering element ID
+            triggerElementID = passedName;
+        } else {
+            // more than one finger touched so cancel
+            touchCancel(event);
+        }
+    }
+
+    function touchMove(event) {
+        event.preventDefault();
+        if ( event.touches.length == 1 ) {
+            curX = event.touches[0].pageX;
+            curY = event.touches[0].pageY;
+        } else {
+            touchCancel(event);
+        }
+    }
+    
+    function touchEnd(event) {
+        event.preventDefault();
+        // check to see if more than one finger was used and that there is an ending coordinate
+        if ( fingerCount == 1 && curX != 0 ) {
+            // use the Distance Formula to determine the length of the swipe
+            swipeLength = Math.round(Math.sqrt(Math.pow(curX - startX,2) + Math.pow(curY - startY,2)));
+            // if the user swiped more than the minimum length, perform the appropriate action
+            if ( swipeLength >= minLength ) {
+                caluculateAngle();
+                determineSwipeDirection();
+                processingRoutine();
+                touchCancel(event); // reset the variables
+            } else {
+                touchCancel(event);
+            }    
+        } else {
+            touchCancel(event);
+        }
+    }
+
+    function touchCancel(event) {
+        // reset the variables back to default values
+        fingerCount = 0;
+        startX = 0;
+        startY = 0;
+        curX = 0;
+        curY = 0;
+        deltaX = 0;
+        deltaY = 0;
+        horzDiff = 0;
+        vertDiff = 0;
+        swipeLength = 0;
+        swipeAngle = null;
+        swipeDirection = null;
+        triggerElementID = null;
+    }
+    
+    function caluculateAngle() {
+        var X = startX-curX;
+        var Y = curY-startY;
+        var Z = Math.round(Math.sqrt(Math.pow(X,2)+Math.pow(Y,2))); //the distance - rounded - in pixels
+        var r = Math.atan2(Y,X); //angle in radians (Cartesian system)
+        swipeAngle = Math.round(r*180/Math.PI); //angle in degrees
+        if ( swipeAngle < 0 ) { swipeAngle =  360 - Math.abs(swipeAngle); }
+    }
+    
+    function determineSwipeDirection() {
+        if ( (swipeAngle <= 45) && (swipeAngle >= 0) ) {
+            swipeDirection = 'left';
+        } else if ( (swipeAngle <= 360) && (swipeAngle >= 315) ) {
+            swipeDirection = 'left';
+        } else if ( (swipeAngle >= 135) && (swipeAngle <= 225) ) {
+            swipeDirection = 'right';
+        } else if ( (swipeAngle > 45) && (swipeAngle < 135) ) {
+            swipeDirection = 'down';
+        } else {
+            swipeDirection = 'up';
+        }
+    }
+
+ var swipedElement = document.getElementById(triggerElementID);
+    function processingRoutine() {
+      if ( swipeDirection == 'left' ) {
+          window.frames.ghost.location.href = 'pirate2_reverse.svg';
+      } else if ( swipeDirection == 'right' ) {
+          window.frames.ghost.location.href = 'pirate2.svg';
+      } else if ( swipeDirection == 'up' ) {
+          alert('up');
+      } else if ( swipeDirection == 'down' ) {
+          alert('down');
+      }
+    }
+    
+    
+
+</script>    
+ 
+
+</script> 
+ 
+</head>  
+<body> 
+ <div data-role="page" id="mypage">  
+  <div data-role="header" data-position="fixed">
+        <h1>WatzThis</h1>
+    </div> <div role="main" class="ui-content" id="mainContent" >  
+
+<h1>WatzThis in Lesson10 Optimizing for mobile devices (swipe3)</h1>
+
+<!--<object width="100%" height="125px" data="animated_ghost.svg" type="image/svg+xml"></object> -->
+
+<!--<?xml version="1.0"?>
+    <svg width="260" height="200" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+     <g class="layer">
+      <title>Layer 1</title>
+      <svg x="0">
+      <polygon cx="178" cy="152" fill="#ffff00" id="svg_4" orient="point" point="5" r="0" r2="0" shape="star" strokeWidth="5" strokecolor="#000000"/>
+      <polygon cx="181" cy="147" fill="#ffff00" id="svg_5" orient="point" point="5" r="0" r2="0" shape="star" strokeWidth="5" strokecolor="none"/>
+      <polygon cx="181" cy="147" fill="#ffff00" id="svg_6" orient="point" point="5" r="0" r2="0" shape="star" strokeWidth="5" strokecolor="none" transform="rotate(164.055 105.748 -0.00000276554)"/>
+      <g id="svg_25"> 
+       <ellipse cx="132.500003" cy="99.906247" fill="#ffd4aa" id="svg_19" rx="122.499996" ry="87.999997" stroke="#000000" stroke-dasharray="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="5"/>
+       <g id="svg_21">
+        <path d="m69.522684,71.798769c-32.132347,0 -57.485646,23.728433 -57.485646,23.728433s25.353299,23.731509 57.485646,23.731509c24.574049,0 57.485646,-23.731509 57.485646,-23.731509s-32.911597,-23.728433 -57.485646,-23.728433zm0,38.51487c-11.279961,0 -20.469148,-6.634979 -20.469148,-14.786437s9.189187,-14.786437 20.469148,-14.786437s20.469148,6.638055 20.469148,14.786437s-9.189187,14.786437 -20.469148,14.786437zm0,-23.417755c-6.595946,0 -11.948498,3.863484 -11.948498,8.631317c0,4.767834 5.348294,8.631317 11.948498,8.631317c6.600204,0 11.948498,-3.863484 11.948498,-8.631317c0,-4.764758 -5.348294,-8.631317 -11.948498,-8.631317z" fill="#000000" id="svg_12" stroke="#000000" stroke-dasharray="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="5"/>
+        <path d="m190.222602,69.758096c-32.132347,0 -57.485646,23.728433 -57.485646,23.728433s25.353299,23.731509 57.485646,23.731509c24.574049,0 57.485646,-23.731509 57.485646,-23.731509s-32.911597,-23.728433 -57.485646,-23.728433zm0,38.51487c-11.279961,0 -20.469148,-6.634979 -20.469148,-14.786437s9.189187,-14.786437 20.469148,-14.786437s20.469148,6.638055 20.469148,14.786437s-9.189187,14.786437 -20.469148,14.786437zm0,-23.417755c-6.595946,0 -11.948498,3.863484 -11.948498,8.631317c0,4.767834 5.348294,8.631317 11.948498,8.631317c6.600204,0 11.948498,-3.863484 11.948498,-8.631317c0,-4.764758 -5.348294,-8.631317 -11.948498,-8.631317z" fill="#000000" id="svg_20" stroke="#000000" stroke-dasharray="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="5"/>
+       </g>
+       <path d="m99.262408,150.81006c-10.770375,-33.248013 -10.063834,-31.066947 -9.253902,-28.566694c0.887474,2.739642 1.826655,5.638866 2.791679,8.617886c0.965024,2.97902 1.904197,5.878244 2.791679,8.617886c1.516465,4.681319 2.100218,6.483358 2.567655,7.926324c0.364037,1.12378 0.6376,1.968283 0.833628,2.573397c0.131403,0.405623 0.2111,0.651664 0.252029,0.777999c0.017233,0.053201 0.017233,0.053201 0.017233,0.053201c0,0 0,0 0,0c0,0 0,0 0,0c0,0 0,0 0,0c0,0 0,0 0,0c0,0 0,0.000124 0,0.000981c0,0.002345 0,0.0069 0,0.014408c0,0.011206 0,0.026843 0,0.047655c0,0.060101 0,0.100484 0,0.146786c0,0.050732 0,0.10443 0,0.159593c0,0.055163 0,0.108861 0,0.159593c0,0.086685 -0.276005,0.614731 0.004475,1.209236c0.262746,0.556929 1.06394,0.75243 1.561042,1.235842c0.489236,0.475769 0.845718,1.034389 1.469407,1.497892c0.591209,0.439365 0.810137,1.075471 1.296923,1.660428c0.349724,0.420256 1.175501,0.881189 1.732699,1.493326c0.42895,0.471248 1.020038,1.023375 1.690124,1.301479c0.832005,0.345308 1.387284,0.826973 2.066586,1.326958c0.551464,0.405893 1.411723,0.807367 2.307836,0.828495c0.894323,0.021082 1.832056,-0.1947 2.618034,0c0.785971,0.1947 1.380093,0.738845 2.253656,0.738845c0.780601,0 1.725744,0 2.486631,0c0.988386,0 1.785264,-0.233471 2.736005,0.00788c0.762943,0.193685 1.249979,0.726556 2.154906,0.730964c0.960192,0.004667 1.72268,-0.004307 2.630451,0.123145c0.789058,0.110788 1.588523,0.335432 2.651174,0.492556c0.700002,0.103505 1.553396,0.105197 2.550421,0.124125c0.761418,0.014453 1.579026,0.367765 2.46559,0.64809c0.77404,0.244745 1.686142,0.089774 2.676348,0.089774c0.646891,0 1.619864,0 2.415218,0c0.994188,0 1.798667,-0.041894 2.584888,0.063044c1.008638,0.134621 1.70091,0.515847 2.769144,0.649206c0.93014,0.116121 1.610595,0.026595 2.350259,0.026595c1.101228,0 1.930381,0 2.83411,0c0.894763,0 1.789527,0 2.684305,0c0.894763,0 1.789542,0 2.684305,0c0.880185,0 1.825328,0 2.586215,0c0.992868,0 1.788207,0 2.782395,0c0.795354,0 1.792803,0.040857 2.564188,-0.015389c0.857369,-0.062525 1.594181,-0.5903 2.442554,-0.723456c0.840439,-0.131916 1.777618,0.073156 2.714797,-0.123145c0.667652,-0.139841 1.483591,-0.528542 2.387365,-0.616681c0.718411,-0.070056 1.411518,-0.589996 2.124088,-0.734538c0.859766,-0.174396 1.665496,-0.358002 2.447864,-0.742171c0.642287,-0.315387 1.416934,-0.56118 2.414717,-0.699927c0.73754,-0.102558 1.70911,-0.421361 2.489946,-0.688112c0.853592,-0.29161 1.535321,-0.56685 2.171298,-1.038324c0.628452,-0.465882 0.815242,-1.032721 1.508516,-1.329923c0.780972,-0.3348 1.593423,-0.830005 2.020188,-1.415627c0.358561,-0.492037 0.982917,-0.909667 1.159891,-1.539752c0.167569,-0.596625 0.772811,-0.990376 1.214231,-1.579278c0.368755,-0.491947 0.766106,-1.050173 0.774146,-1.738623c0.007342,-0.628541 0.773251,-1.006002 0.992868,-1.582119c0.232679,-0.61039 -0.310836,-1.361512 0.011924,-2.001778c0.263247,-0.522217 0.981339,-0.902857 0.983584,-1.588016c0.002048,-0.628519 0,-1.313666 0,-2.001778l0.220042,-0.529015l0.774146,-0.042232l0,-0.681224" fill="none" id="svg_24" stroke="#000000" stroke-dasharray="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="5" transform="rotate(-18.107 140.66 143.297)"/>
+      </g>
+     <animate attributeName="x" to="350" dur="3s" repeatCount="5" />
+    </svg>  
+     </g>
+    </svg>-->
+
+<!--<object width="100%" height="200px" data="pirate2.svg" type="image/svg+xml"></object>-->
+<iframe name="ghost" width="800px" height="200px" src="pirate2.svg"></iframe>
+<div id="directions" ontouchstart="touchStart(event,'ghost');" ontouchend="touchEnd(event);" ontouchmove="touchMove(event);" ontouchcancel="touchCancel(event);">
+<ol>
+  <li>Swipe here to reverse the ghost's direction.</li>  
+  <li>Use the top row of buttons to turn the flashlight on or off, or to make the light red/green.</li>
+  <li>Use the 2nd row of buttons to turn on and off your automatic flashing color light dance party.</li>
+  <li>Use the 3rd row of buttons to test Geolocations</li>
+</ol>
+</div>        
+
+
+<div id="flashlight" data-role="controlgroup" data-type="horizontal"> 
+<input type="button" id="OFF" class="bigButton" value="OFF" onclick="flip(0);"> 
+<input type="button" id="ON" class="bigButton" value="ON" onclick="flip(1);"> 
+<input type="button" id="RED" class="bigButton" value="RED" onclick="flip(2);">     
+<input type="button" id="GREEN" class="bigButton" value="GREEN" onclick="flip(4);">  
+</div> 
+<div id="danceparty" data-role="controlgroup" data-type="horizontal"> 
+<input type="button" id="AUTO" class="bigButton" value="AUTO" onclick="doAutoFlip(600);"> 
+<input type="button" id="STOP" class="bigButton" value="STOP" onclick="stopFlip();"> 
+</div>     
+<div id="colorCaption">Here is my text.</div>
+<div id="geolocation" data-role="controlgroup" data-type="horizontal"> 
+<input type="button" id="latlong" class="bigButton" value="GET LOC" onclick="getLoc();"> 
+<input type="button" id="latlong" class="bigButton" value="GeoCaching" onclick="navigator.geolocation.getCurrentPosition(makeLink, noLink);"> 
+</div>
+<div id="map_container">
+    <div id="map_canvas"></div>
+    <div id="restaurant_panel">
+        <h2>Nearby Restaurants & Cafes</h2>
+        <div id="restaurant_list">
+            <p>Click "GET LOC" to find places.</p>
+        </div>
+    </div>
+</div>
+</div> <div data-role="footer" data-position="fixed">
+  
+       <p>created by WatzThis Enterprises</p>
+     
+        <div data-role="navbar" data-id="watzthisnav">
+            <ul>
+            <li><a href="#mypage">Home</a></li>
+            <li><a href="docs.html">Help</a></li>
+            </ul>
+        </div> </div> </div></body> 
+</html>
