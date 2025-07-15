@@ -69,7 +69,6 @@ function $(id){
 var you = {}; // UNCOMMENTED
 var map = {}; // UNCOMMENTED
 // Removed `var service;` as it's not strictly used for new Places API methods
-
 async function getLoc() { 
     if (navigator.geolocation) {
         try {
@@ -122,6 +121,7 @@ async function getLoc() {
         alert("Your browser doesn't support geolocation.");
     }
 }
+
 
 function callback(results, status) {
     const restaurantList = $('restaurant_list');
