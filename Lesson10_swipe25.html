@@ -74,7 +74,6 @@ var map = {}; // UNCOMMENTED
 // Global array to hold markers so we can clear them easily
 let placeMarkers = [];
 
-
 async function getLoc() { 
     if (navigator.geolocation) {
         try {
@@ -141,7 +140,7 @@ async function getLoc() {
             const { places } = await google.maps.places.Place.searchNearby(request); 
             console.log("Places (New) API results:", places);
         
-            callback(places, google.maps.places.PlacesServiceStatus.OK); 
+            callback(places, google.maps.places.PlacesServiceStatus.OK, latLng); 
 
         } catch (error) {
             console.error("Error in getLoc:", error);
@@ -159,8 +158,25 @@ async function getLoc() {
         document.getElementById('restaurant_list').innerHTML = '<p>Your browser does not support Geolocation.</p>';
     }
 }
+function getDistanceInKm(placeLocation, latLng) {
+  // placeLocation would be like place.location from the New Place API (a LatLngLiteral or LatLng object)
+  // myLatLng would be your custom google.maps.LatLng(latitude, longitude) object
 
-function callback(results, status) {
+  if (!google.maps.geometry || !google.maps.geometry.spherical) {
+    console.error("Google Maps Geometry library not loaded. Please add '&libraries=geometry' to your API script URL.");
+    return null;
+  }
+
+  const distanceInMeters = google.maps.geometry.spherical.computeDistanceBetween(
+    placeLocation,
+    latLng
+  );
+
+  const distanceInKm = distanceInMeters / 1000;
+  //alert("distanceInKm:"+ distanceInKm);
+  return distanceInKm;
+}
+function callback(results, status, latLng) {
     const restaurantList = $('restaurant_list');
     restaurantList.innerHTML = ''; 
 
@@ -187,7 +203,7 @@ function callback(results, status) {
                 const marker = new google.maps.Marker({
                     map: map,
                     position: place.location,
-                    title: place.displayName.text,
+                    title: place.displayName,
                     icon: { // Custom icon for restaurants (e.g., a red dot)
                         url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', // Red dot for places
                         scaledSize: new google.maps.Size(30, 30)
@@ -198,8 +214,8 @@ function callback(results, status) {
                 const infoWindowContent = `
                     <strong>${place.displayName}</strong><br>
                     ${place.formattedAddress || ''}<br>
-                    Rating: ${place.rating ? place.rating + ' stars' : 'N/A'}
-                    ${place.distanceMeters !== undefined ? `<br>Distance: ${(place.distanceMeters / 1000).toFixed(1)} km` : ''}
+                    Rating: ${place.rating ? place.rating + ' stars' : 'N/A'}<br>
+                    Distance: ${(getDistanceInKm(place.location,latLng)).toFixed(1) + 'km'} 
                 `;
                 const infoWindow = new google.maps.InfoWindow({
                     content: infoWindowContent
@@ -228,8 +244,9 @@ function callback(results, status) {
             }
 
             // Display distanceMeters with 1 decimal place
-            if (place.distanceMeters !== undefined) {
-                const distanceKm = (place.distanceMeters / 1000).toFixed(1); // One decimal place
+            
+            if (place.location !== undefined) {
+                const distanceKm = (getDistanceInKm(place.location,latLng)).toFixed(1); // One decimal place
                 textContent += ` (${distanceKm} km)`;
             }
 
